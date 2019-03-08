@@ -1,0 +1,101 @@
+diff --git a/sys/decklink/gstdecklink.cpp b/sys/decklink/gstdecklink.cpp
+index cbe2abc..6750836 100644
+--- a/sys/decklink/gstdecklink.cpp
++++ b/sys/decklink/gstdecklink.cpp
+@@ -562,31 +562,31 @@ gst_decklink_mode_get_structure (GstDecklinkModeEnum e, BMDPixelFormat f,
+       "pixel-aspect-ratio", GST_TYPE_FRACTION, mode->par_n, mode->par_d,
+       "interlace-mode", G_TYPE_STRING,
+       mode->interlaced ? "interleaved" : "progressive",
+-      "framerate", GST_TYPE_FRACTION, mode->fps_n, mode->fps_d, NULL);
++      "framerate", GST_TYPE_FRACTION, mode->fps_n, mode->fps_d, nullptr);
+ 
+   if (input && mode->interlaced) {
+     if (mode->tff)
+       gst_structure_set (s, "field-order", G_TYPE_STRING, "top-field-first",
+-          NULL);
++          nullptr);
+     else
+       gst_structure_set (s, "field-order", G_TYPE_STRING, "bottom-field-first",
+-          NULL);
++          nullptr);
+   }
+ 
+   switch (f) {
+     case bmdFormat8BitYUV:     /* '2vuy' */
+       gst_structure_set (s, "format", G_TYPE_STRING, "UYVY",
+           "colorimetry", G_TYPE_STRING, mode->colorimetry,
+-          "chroma-site", G_TYPE_STRING, "mpeg2", NULL);
++          "chroma-site", G_TYPE_STRING, "mpeg2", nullptr);
+       break;
+     case bmdFormat10BitYUV:    /* 'v210' */
+-      gst_structure_set (s, "format", G_TYPE_STRING, "v210", NULL);
++      gst_structure_set (s, "format", G_TYPE_STRING, "v210", nullptr);
+       break;
+     case bmdFormat8BitARGB:    /* 'ARGB' */
+-      gst_structure_set (s, "format", G_TYPE_STRING, "ARGB", NULL);
++      gst_structure_set (s, "format", G_TYPE_STRING, "ARGB", nullptr);
+       break;
+     case bmdFormat8BitBGRA:    /* 'BGRA' */
+-      gst_structure_set (s, "format", G_TYPE_STRING, "BGRA", NULL);
++      gst_structure_set (s, "format", G_TYPE_STRING, "BGRA", nullptr);
+       break;
+     case bmdFormat10BitRGB:    /* 'r210' Big-endian RGB 10-bit per component with SMPTE video levels (64-960). Packed as 2:10:10:10 */
+     case bmdFormat12BitRGB:    /* 'R12B' Big-endian RGB 12-bit per component with full range (0-4095). Packed as 12-bit per component */
+diff --git a/sys/decklink/gstdecklinkaudiosrc.cpp b/sys/decklink/gstdecklinkaudiosrc.cpp
+index 3abbc50..8d5a5db 100644
+--- a/sys/decklink/gstdecklinkaudiosrc.cpp
++++ b/sys/decklink/gstdecklinkaudiosrc.cpp
+@@ -369,7 +369,7 @@ gst_decklink_audio_src_set_caps (GstBaseSrc * bsrc, GstCaps * caps)
+       g_mutex_unlock (&self->input->lock);
+ 
+       if (videosrc) {
+-        g_object_get (videosrc, "connection", &vconn, NULL);
++        g_object_get (videosrc, "connection", &vconn, nullptr);
+         gst_object_unref (videosrc);
+ 
+         switch (vconn) {
+@@ -463,11 +463,11 @@ gst_decklink_audio_src_get_caps (GstBaseSrc * bsrc, GstCaps * filter)
+     if (self->channels_found > 0) {
+       channel_filter =
+           gst_caps_new_simple ("audio/x-raw", "channels", G_TYPE_INT,
+-          self->channels_found, NULL);
++          self->channels_found, nullptr);
+     } else if (self->channels > 0) {
+       channel_filter =
+           gst_caps_new_simple ("audio/x-raw", "channels", G_TYPE_INT,
+-          self->channels, NULL);
++          self->channels, nullptr);
+     } else {
+       channel_filter = gst_caps_new_empty_simple ("audio/x-raw");
+     }
+diff --git a/sys/decklink/gstdecklinkvideosink.cpp b/sys/decklink/gstdecklinkvideosink.cpp
+index 3295c3a..7f43cd7 100644
+--- a/sys/decklink/gstdecklinkvideosink.cpp
++++ b/sys/decklink/gstdecklinkvideosink.cpp
+@@ -172,7 +172,7 @@ reset_framerate (GstCapsFeatures * features, GstStructure * structure,
+     gpointer user_data)
+ {
+   gst_structure_set (structure, "framerate", GST_TYPE_FRACTION_RANGE, 0, 1,
+-      G_MAXINT, 1, NULL);
++      G_MAXINT, 1, nullptr);
+ 
+   return TRUE;
+ }
+diff --git a/sys/dvb/gstdvbsrc.c b/sys/dvb/gstdvbsrc.c
+index d9bee26..a7d3df1 100644
+--- a/sys/dvb/gstdvbsrc.c
++++ b/sys/dvb/gstdvbsrc.c
+@@ -97,7 +97,13 @@
+ #include <gst/gst.h>
+ #include <gst/glib-compat-private.h>
+ #include <sys/ioctl.h>
++#ifdef HAVE_POLL_H
++#include <poll.h>
++#else
++#ifdef HAVE_SYS_POLL_H
+ #include <sys/poll.h>
++#endif
++#endif
+ #include <fcntl.h>
+ #include <errno.h>
+ #include <stdio.h>

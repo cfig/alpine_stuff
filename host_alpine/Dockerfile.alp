@@ -1,0 +1,30 @@
+FROM       alpine:latest
+MAINTAINER cfig <yuyezhong@gmail.com>
+
+USER root
+ENV TZ=Asia/Shanghai
+ENV EDITOR=vim
+RUN apk add --no-cache alpine-sdk
+RUN apk add --no-cache tzdata python3
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN apk update
+# tools
+RUN apk add --no-cache vim ctags git xz the_silver_searcher tree clang python python3
+# config vim
+RUN curl -sL https://raw.githubusercontent.com/cfig/linux_tools/master/install_vim_plugins/install_vim | python3
+# config git
+RUN curl -sL https://raw.githubusercontent.com/cfig/linux_tools/master/config_git/config.mk | make config ext -f -
+# alsa
+RUN apk add --no-cache alsa-utils alsa-lib-dev
+RUN apk add --no-cache linux-headers musl-dev cmake make automake autoconf libcurl curl-dev openssl libgcrypt-dev libsoup-dev graphviz doxygen gtest gtest-dev man-pages ffmpeg bison flex faad2
+# gstreamer
+RUN apk add libogg libogg-dev libvorbis-dev libvorbis libtheora libtheora-dev pango-dev pango opus-dev opus lame-dev lame taglib-dev taglib pulseaudio-dev pulseaudio wavpack-dev wavpack flac-dev flac faac faac-dev faad2 faad2-dev mpg123 mpg123-dev
+ADD _profile /root/_profile
+RUN echo 'alias vi="vim"' >> ~/.profile
+
+VOLUME ["/my_volume"]
+USER root
+ARG DEBIAN_FRONTEND=noninteractive
+RUN mkdir /usr/cfig
+
+ENTRYPOINT ["/bin/sh", "-c", "while true; do echo hello world; sleep 1; done"]

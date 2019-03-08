@@ -1,0 +1,13 @@
+diff --git a/configure b/configure
+index a59dbea..3689db8 100755
+--- a/configure
++++ b/configure
+@@ -27060,7 +27060,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+   CFLAGS="$save_CFLAGS"
+ 
+   if test "X$flag_ok" = Xyes ; then
+-    ERROR_CFLAGS="$ERROR_CFLAGS -Werror"
++    ERROR_CFLAGS="$ERROR_CFLAGS -Werror -Wno-error=cpp"
+     true
+   else
+ 

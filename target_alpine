@@ -1,0 +1,1 @@
+apk add alsa-lib libstdc++ glib sqlite-libs libcurl alsa-utils curl python3 bash

@@ -1,0 +1,36 @@
+diff --git a/configure b/configure
+index 0f55990..3f9f522 100755
+--- a/configure
++++ b/configure
+@@ -29285,7 +29285,7 @@ $as_echo "$debug_system_enabled" >&6; }
+ 
+ 
+   WARNING_CFLAGS=""
+-  ERROR_CFLAGS=""
++  ERROR_CFLAGS="-Wno-error=format= -Wno-error=cpp"
+ 
+ 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking to see if compiler understands -Wall" >&5
+@@ -29442,7 +29442,7 @@ $as_echo "$flag_ok" >&6; }
+ $as_echo_n "checking to see if compiler understands -Werror... " >&6; }
+ 
+   save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -Werror"
++  CFLAGS="$CFLAGS -Werror -Wno-error=format="
+ 
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+diff --git a/sys/decklink/Makefile.am b/sys/decklink/Makefile.am
+index ce3abd7..b8ad3ff 100644
+--- a/sys/decklink/Makefile.am
++++ b/sys/decklink/Makefile.am
+@@ -5,7 +5,8 @@ libgstdecklink_la_CPPFLAGS = \
+ 	$(GST_PLUGINS_BASE_CFLAGS) \
+ 	$(GST_BASE_CFLAGS) \
+ 	$(GST_CXXFLAGS) \
+-	$(DECKLINK_CXXFLAGS)
++	$(DECKLINK_CXXFLAGS) \
++	-Wno-error=format=
+ libgstdecklink_la_LIBADD = \
+ 	$(GST_PLUGINS_BASE_LIBS) \
+ 	-lgstaudio-@GST_API_VERSION@ \

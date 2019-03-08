@@ -1,0 +1,13 @@
+version: '3'
+services:
+    alp:
+        build:
+            context: .
+            dockerfile: Dockerfile.alp
+        image: cfig_alpine:latest
+        ports:
+            - "8082:8080"
+        volumes:
+            - ./mnt_volume:/my_volume
+        environment:
+            - DEBUG=1

@@ -1,0 +1,14 @@
+diff --git a/gst/gstpoll.c b/gst/gstpoll.c
+index 5e0a668..5fa837e 100644
+--- a/gst/gstpoll.c
++++ b/gst/gstpoll.c
+@@ -75,9 +75,6 @@
+ #include <winsock2.h>
+ #else
+ #define _GNU_SOURCE 1
+-#ifdef HAVE_SYS_POLL_H
+-#include <sys/poll.h>
+-#endif
+ #ifdef HAVE_POLL_H
+ #include <poll.h>
+ #endif

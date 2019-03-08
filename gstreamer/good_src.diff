@@ -1,0 +1,13 @@
+diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
+index 71d1a28..68d91af 100644
+--- a/sys/v4l2/gstv4l2object.c
++++ b/sys/v4l2/gstv4l2object.c
+@@ -529,7 +529,7 @@ gst_v4l2_object_new (GstElement * element,
+     v4l2object->fd_open = NULL;
+     v4l2object->close = close;
+     v4l2object->dup = dup;
+-    v4l2object->ioctl = ioctl;
++    v4l2object->ioctl = (int (*)(int,  long unsigned int,  ...)) ioctl;
+     v4l2object->read = read;
+     v4l2object->mmap = mmap;
+     v4l2object->munmap = munmap;
