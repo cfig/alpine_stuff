@@ -10,4 +10,4 @@ services:
         volumes:
             - ./mnt_volume:/my_volume
         environment:
-            - DEBUG=1
+            - DEBUG=0

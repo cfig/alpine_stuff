@@ -4,12 +4,11 @@ MAINTAINER cfig <yuyezhong@gmail.com>
 USER root
 ENV TZ=Asia/Shanghai
 ENV EDITOR=vim
-RUN apk add --no-cache alpine-sdk
-RUN apk add --no-cache tzdata python3
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
-RUN apk update
 # tools
-RUN apk add --no-cache vim ctags git xz the_silver_searcher tree clang python python3
+RUN apk update
+RUN apk add --no-cache alpine-sdk tzdata vim ctags git
+RUN apk add --no-cache xz the_silver_searcher tree clang python python3 bash
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 # config vim
 RUN curl -sL https://raw.githubusercontent.com/cfig/linux_tools/master/install_vim_plugins/install_vim | python3
 # config git

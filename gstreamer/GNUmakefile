@@ -1,5 +1,5 @@
-gstVersion := 1.15.1
-installDir := $(HOME)/.programs/gst$(gstVersion)
+gstVersion := 1.15.2
+installDir := $(HOME)/.programs/gst
 down:
 	wget https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-$(gstVersion).tar.xz
 	wget https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-$(gstVersion).tar.xz

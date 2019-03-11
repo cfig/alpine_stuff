@@ -1,26 +1,52 @@
+# DEBUG := 1
+
+$(warning debug is $(DEBUG))
 PA_INCLUDE := $(shell pkgconf --cflags-only-I portaudiocpp)
 PA_LIBS := $(shell pkgconf --libs-only-L portaudiocpp)
 PA_INC_PATH = $(shell echo -e """print('$(PA_INCLUDE)'[2:])""" | python3)
 PA_LIB_PATH = $(shell echo -e """print('$(PA_LIBS)'.strip()[2:] + '/libportaudio.a')""" | python3)
-srcDir := /my_volume/avs-device-sdk
-buildDir := /my_volume/build
+ifeq '$(PA_INC_PATH)' ''
+$(error no 'portaudiocpp' include path found in PKG_CONFIG_PATH)
+endif
+ifeq '$(PA_LIB_PATH)' ''
+$(error no 'portaudiocpp' libs path found in PKG_CONFIG_PATH)
+endif
+srcDir := $(CURDIR)/avs-device-sdk
+buildDir := $(CURDIR)/build
 avsBinDir := avs_bin
+ifeq '$(DEBUG)' '1'
+debugFlag := -DCMAKE_BUILD_TYPE=DEBUG
+else
+debugFlag :=
+endif
+
+down:
+	git clone https://github.com/alexa/avs-device-sdk.git --depth=10 -b v1.12
 
 avs:
-	cd $(buildDir) && cmake $(srcDir) \
+	rm -fr $(buildDir) && mkdir $(buildDir)
+	cd $(buildDir) && \
+		cmake $(srcDir) \
 	    -DSENSORY_KEY_WORD_DETECTOR=OFF \
 	    -DGSTREAMER_MEDIA_PLAYER=ON \
 	    -DPORTAUDIO=ON \
 	    -DPORTAUDIO_LIB_PATH=$(PA_LIB_PATH) \
 	    -DPORTAUDIO_INCLUDE_DIR=$(PA_INC_PATH) \
-	    -DCMAKE_BUILD_TYPE=DEBUG
+		$(debugFlag)
+	cd $(buildDir) && \
+		make -j4
 
+sn := $(shell date | md5sum  | cut -d' ' -f1)
+securityConfig := config.coala.json
+configFile := AlexaClientSDKConfig.coala.json
 config:
 	bash $(srcDir)/tools/Install/genConfig.sh \
-		coala_config.json \
-		199834f8ebd8fb8 \
+		$(securityConfig) \
+		$(sn) \
 		coala_db \
+		$(srcDir) \
 		$(buildDir)/Integration/AlexaClientSDKConfig.json
+	cp $(buildDir)/Integration/AlexaClientSDKConfig.json $(configFile)
 
 copy:
 	rm -fr $(avsBinDir) && mkdir $(avsBinDir)
@@ -28,7 +54,7 @@ copy:
 	echo "export GST_PLUGIN_PATH=\`pwd\`/lib:\`pwd\`/lib/gstreamer-1.0" >> $(avsBinDir)/run.sh
 	echo "export LD_LIBRARY_PATH=\`pwd\`:$$GST_PLUGIN_PATH" >> $(avsBinDir)/run.sh
 	echo "export GST_DEBUG=2" >> $(avsBinDir)/run.sh
-	echo "./SampleApp AlexaClientSDKConfig.json DEBUG9" >> $(avsBinDir)/run.sh
+	echo "./SampleApp $(configFile) DEBUG9" >> $(avsBinDir)/run.sh
 	chmod 755 $(avsBinDir)/run.sh
 	@cp $(buildDir)/SampleApp/src/SampleApp $(avsBinDir)/
 	@cp -v $(buildDir)/ACL/src/libACL.so $(avsBinDir)/
@@ -63,7 +89,7 @@ copy:
 	@cp -v $(buildDir)/Settings/src/libDeviceSettings.so $(avsBinDir)/
 	@cp -v $(buildDir)/SpeechEncoder/src/libSpeechEncoder.so $(avsBinDir)/
 	@cp -v $(buildDir)/Storage/SQLiteStorage/src/libSQLiteStorage.so $(avsBinDir)/
-	@cp -v $(HOME)/.programs/gst1.15.1/lib/libgstapp-1.0.so.0 $(avsBinDir)/
-	@cp -v $(HOME)/.programs/gst1.15.1/lib/libgstbase-1.0.so.0 $(avsBinDir)/
-	@cp -v $(HOME)/.programs/gst1.15.1/lib/libgstreamer-1.0.so.0 $(avsBinDir)/
-	@cp -v $(buildDir)/Integration/AlexaClientSDKConfig.json $(avsBinDir)/
+	@cp -v $(HOME)/.programs/gst/lib/libgstapp-1.0.so.0 $(avsBinDir)/
+	@cp -v $(HOME)/.programs/gst/lib/libgstbase-1.0.so.0 $(avsBinDir)/
+	@cp -v $(HOME)/.programs/gst/lib/libgstreamer-1.0.so.0 $(avsBinDir)/
+	@cp -v $(configFile) $(avsBinDir)/

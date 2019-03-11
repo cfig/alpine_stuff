@@ -1,6 +1,6 @@
-export PKG_CONFIG_PATH=~/.programs/gst1.15.1/lib/pkgconfig:~/.programs/portaudio/lib/pkgconfig
-export PATH=~/.programs/gst1.15.1/bin:$PATH
-export LD_LIBRARY_PATH=~/.programs/gst1.15.1/lib:$LD_LIBRARY_PATH
+export PKG_CONFIG_PATH=~/.programs/gst/lib/pkgconfig:~/.programs/portaudio/lib/pkgconfig
+export PATH=~/.programs/gst/bin:$PATH
+export LD_LIBRARY_PATH=~/.programs/gst/lib:$LD_LIBRARY_PATH
 alias vi="vim"
 alias l='ls -CF'
 alias la='ls -A'
